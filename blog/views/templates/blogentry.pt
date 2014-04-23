@@ -5,6 +5,10 @@
   <p><strong>Posted at ${context.pubdate.strftime('%Y-%m-%d %H:%M')}</strong>
   <div>${structure: view.blogentry}</div>
 
+  <div class="tags">
+      Tags: <span tal:repeat="tag view.tags"><a href="${request.resource_url(tag)}">${tag.name}</a></span>
+  </div>
+
   <tal:attachments condition="view.attachments">
   <a name="attachments"></a>
   <h4>Attachments</h4>

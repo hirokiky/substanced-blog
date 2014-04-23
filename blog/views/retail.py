@@ -37,6 +37,8 @@ def blogview(context, request):
                  'attachments': [{'name': a.__name__, 'url': resource_url(a, request, 'download')}
                                  for a in blogentry['attachments'].values()],
                  'numcomments': len(blogentry['comments'].values()),
+                 'tags': [{'name': tag.name, 'url': resource_url(tag, request)}
+                          for tag in blogentry.tags]
                  })
     blogentries.sort(key=lambda x: x['pubdate'].isoformat())
     blogentries.reverse()
@@ -64,6 +66,10 @@ class BlogEntryView(object):
     @reify
     def attachments(self):
         return self.context['attachments'].values()
+
+    @reify
+    def tags(self):
+        return self.context.tags
 
     @view_config(request_method='GET')
     def view_blogentry(self):

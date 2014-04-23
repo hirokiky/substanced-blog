@@ -36,6 +36,10 @@
         <a href="${blogentry['url']}">Permalink</a>
     </small>
     <div>${structure: blogentry['body']}</div>
+    <div class="tags">
+      Tags: <span tal:repeat="tag blogentry['tags']"><a href="${tag['url']}">${tag['name']}</a></span>
+    </div>
+
     <tal:attachments condition="blogentry['attachments']">
     <h4>Attachments</h4>
     <ul>
