@@ -180,7 +180,7 @@ class FeedViews(object):
                 y, mo, d, h, mi, s = updated.timetuple()[:6]
                 updated = datetime.datetime(
                     y, mo, d, h, mi, s, tzinfo=pytz.utc)
-            info['updated_atom'] = updated.astimezone(pytz.utc).isoformat()
+            info['updated_atom'] = pytz.utc.localize(updated).isoformat()
             info['updated_rss'] = updated.strftime('%a, %d %b %Y %H:%M:%S %z')
 
         blogentries = []
