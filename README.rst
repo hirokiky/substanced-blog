@@ -11,6 +11,7 @@ Additional features
 This project contains a variety of additional features compared with original demo app:
 
 * Tag
+* Flat Page
 
 Installation
 ------------

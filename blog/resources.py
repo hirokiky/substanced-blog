@@ -29,14 +29,14 @@ from substanced.util import renamer, get_oid
 from .interfaces import BlogEntryToTag
 
 
-class PageSchema(Schema):
+class FlatPageSchema(Schema):
     name = NameSchemaNode(
-        editing=lambda c, r: r.registry.content.istype(c, 'Page')
+        editing=lambda c, r: r.registry.content.istype(c, 'Flat Page')
     )
     title = colander.SchemaNode(
         colander.String(),
     )
-    body = colander.SchemaNode(
+    entry = colander.SchemaNode(
         colander.String(),
         widget=deform.widget.TextAreaWidget(rows=20, cols=70),
     )
@@ -49,41 +49,41 @@ class PageSchema(Schema):
 
 
 class PagePropertySheet(PropertySheet):
-    schema = PageSchema()
+    schema = FlatPageSchema()
 
 
 @content(
-    'Page',
+    'Flat Page',
     icon='glyphicon glyphicon-book',
-    add_view='add_page',
+    add_view='add_flatpage',
     propertysheets=(
         ('', PagePropertySheet),
     ),
     catalog=True,
     tab_order=('properties',),
 )
-class Page(Persistent):
+class FlatPage(Persistent):
 
     name = renamer()
 
-    def __init__(self, title='', body='', format='rst'):
-        super(Page, self).__init__()
+    def __init__(self, title='', entry='', format='rst'):
+        super(FlatPage, self).__init__()
         self.title = title
-        self.body = body
+        self.entry = entry
         self.format = format
 
 
 @content(
-    'Pages',
+    'Flat Pages',
     icon='glyphicon glyphicon-list-alt',
 )
-class Pages(Folder):
+class FlatPages(Folder):
 
     """ Folder for static flat pages
     """
 
     def __sdi_addable__(self, context, introspectable):
-        return introspectable.get('content_type') == 'Page'
+        return introspectable.get('content_type') == 'Flat Page'
 
 
 class TagSchema(Schema):
@@ -360,6 +360,6 @@ class Blog(Root):
         self.add('tags', tags, registry=registry)
 
         # Adding a Pages folder
-        pages = registry.content.create('Pages')
+        pages = registry.content.create('Flat Pages')
         pages.__sdi_deletable__ = False
         self.add('pages', pages, registry=registry)

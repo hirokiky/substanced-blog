@@ -22,6 +22,15 @@ def _getentrybody(format, entry):
 
 
 @view_config(
+    renderer='templates/flatpage.pt',
+    content_type='Flat Page',
+)
+def flatpageview(context, request):
+    return {'title': context.title,
+            'body': _getentrybody(context.format, context.entry)}
+
+
+@view_config(
     renderer='templates/frontpage.pt',
     content_type='Root',
 )
