@@ -1,0 +1,51 @@
+<html metal:use-macro="load: main.pt">
+
+<metal:slot metal:fill-slot="styles">
+<style type="text/css">
+    .blog-entry {
+        border-top: 1px solid #CCC;
+        margin-bottom: 20px;
+        padding-top: 20px;
+    }
+    .blog-entry-date {
+        font-size: 120%;
+        font-weight: bold;
+    }
+    h3 {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+</style>
+</metal:slot>
+
+<metal:slot metal:fill-slot="content">
+<div class="jumbotron">
+    <p>${request.root.description}</p>
+</div>
+<div tal:repeat="blogentry blogentries" class="blog-entry">
+    <div class="blog-entry-date">
+            ${blogentry['pubdate'].strftime('%Y-%m-%d')}
+    </div>
+    <h3>${blogentry['title']}</h3>
+    <small>
+        <a tal:condition="blogentry['numcomments']"
+            href="${blogentry['url']}#comments">${blogentry['numcomments']} comments</a>
+        <a tal:condition="not blogentry['numcomments']"
+            href="${blogentry['url']}#post-comment">Post a comment</a>
+        |
+        <a href="${blogentry['url']}">Permalink</a>
+    </small>
+    <div>${structure: blogentry['body']}</div>
+    <tal:attachments condition="blogentry['attachments']">
+    <h4>Attachments</h4>
+    <ul>
+      <li tal:repeat="a blogentry['attachments']">
+        <a href="${a.url}">${a.name}</a>
+      </li>
+    </ul>
+    </tal:attachments>
+
+</div>
+</metal:slot>
+
+</html>
