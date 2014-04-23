@@ -12,12 +12,65 @@ from pyramid.security import (
 from substanced.content import content
 from substanced.folder import Folder
 from substanced.property import PropertySheet
+from substanced.schema import MultireferenceIdSchemaNode
+from substanced.objectmap import (
+    multireference_sourceid_property,
+    multireference_source_property,
+    multireference_targetid_property,
+    multireference_target_property,
+)
 from substanced.root import Root
 from substanced.schema import (
     Schema,
     NameSchemaNode,
     )
-from substanced.util import renamer
+from substanced.util import renamer, get_oid
+
+from .interfaces import BlogEntryToTag
+
+
+class TagSchema(Schema):
+    name = NameSchemaNode(
+        editing=lambda c, r: r.registry.content.istype(c, 'Tag')
+    )
+
+
+class TagPropertySheet(PropertySheet):
+    schema = TagSchema()
+
+
+@content(
+    'Tag',
+    add_view='add_tag',
+    icon='glyphicon glyphicon-tags',
+    propertysheets=(
+        ('', TagPropertySheet),
+        ),
+    tab_order=('properties',),
+)
+class Tag(Persistent):
+    name = renamer()
+    entryids = multireference_targetid_property(BlogEntryToTag)
+    entries = multireference_target_property(BlogEntryToTag)
+
+
+@content(
+    'Tags',
+    icon='glyphicon glyphicon-list-alt',
+)
+class Tags(Folder):
+    """ Folder for tags of a blog entry
+    """
+    def __sdi_addable__(self, context, introspectable):
+        return introspectable.get('content_type') == 'Tag'
+
+
+def tags_choices(context, request):
+    blog = request.registry.content.find(context, 'Root')
+    tags = blog.get('tags')
+    values = [(get_oid(tag), name) for name, tag in tags.items()]
+    return values
+
 
 @colander.deferred
 def now_default(node, kw):
@@ -40,10 +93,15 @@ class BlogEntrySchema(Schema):
         widget = deform.widget.SelectWidget(
             values=[('rst', 'rst'), ('html', 'html')]),
         )
+    tagids = MultireferenceIdSchemaNode(
+        choices_getter=tags_choices,
+        title='Tags',
+    )
     pubdate = colander.SchemaNode(
        colander.DateTime(default_tzinfo=None),
        default = now_default,
        )
+
 
 class BlogEntryPropertySheet(PropertySheet):
     schema = BlogEntrySchema()
@@ -61,6 +119,9 @@ class BlogEntryPropertySheet(PropertySheet):
 class BlogEntry(Folder):
 
     name = renamer()
+
+    tagids = multireference_sourceid_property(BlogEntryToTag)
+    tags = multireference_source_property(BlogEntryToTag)
 
     def __init__(self, title, entry, format, pubdate):
         Folder.__init__(self)
@@ -209,8 +270,17 @@ class Blog(Root):
     @sdi_title.setter
     def sdi_title(self, value):
         self.title = value
-    
+
     def after_create_blog(self, inst, registry):
         acl = getattr(self, '__acl__', [])
         acl.append((Allow, Everyone, 'view'))
         self.__acl__ = acl
+
+        # Adding a Tags folder
+        tags = registry.content.create('Tags')
+        tags.__sdi_deletable__ = False
+        self.add('tags', tags, registry=registry)
+
+        tag = registry.content.create('Tag')
+        tags['testtag'] = tag
+
