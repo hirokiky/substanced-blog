@@ -6,6 +6,12 @@ This repository originated from demo blog app provided by SubstanceD_ itself.
 
 Now this project is experimental and for learning SubstanceD_. 
 
+Additional features
+-------------------
+This project contains a variety of additional features compared with original demo app:
+
+* Tag
+
 Installation
 ------------
 ::
