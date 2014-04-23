@@ -301,6 +301,3 @@ class Blog(Root):
         tags = registry.content.create('Tags')
         tags.__sdi_deletable__ = False
         self.add('tags', tags, registry=registry)
-
-        tag = registry.content.create('Tag')
-        tags['testtag'] = tag
