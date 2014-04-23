@@ -29,6 +29,63 @@ from substanced.util import renamer, get_oid
 from .interfaces import BlogEntryToTag
 
 
+class PageSchema(Schema):
+    name = NameSchemaNode(
+        editing=lambda c, r: r.registry.content.istype(c, 'Page')
+    )
+    title = colander.SchemaNode(
+        colander.String(),
+    )
+    body = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.TextAreaWidget(rows=20, cols=70),
+    )
+    format = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf(['rst', 'html']),
+        widget=deform.widget.SelectWidget(
+            values=[('rst', 'rst'), ('html', 'html')]),
+    )
+
+
+class PagePropertySheet(PropertySheet):
+    schema = PageSchema()
+
+
+@content(
+    'Page',
+    icon='glyphicon glyphicon-book',
+    add_view='add_page',
+    propertysheets=(
+        ('', PagePropertySheet),
+    ),
+    catalog=True,
+    tab_order=('properties',),
+)
+class Page(Persistent):
+
+    name = renamer()
+
+    def __init__(self, title='', body='', format='rst'):
+        super(Page, self).__init__()
+        self.title = title
+        self.body = body
+        self.format = format
+
+
+@content(
+    'Pages',
+    icon='glyphicon glyphicon-list-alt',
+)
+class Pages(Folder):
+
+    """ Folder for static flat pages
+    """
+
+    def __sdi_addable__(self, context, introspectable):
+        return introspectable.get('content_type') == 'Page'
+
+
 class TagSchema(Schema):
     name = NameSchemaNode(
         editing=lambda c, r: r.registry.content.istype(c, 'Tag')
@@ -301,3 +358,8 @@ class Blog(Root):
         tags = registry.content.create('Tags')
         tags.__sdi_deletable__ = False
         self.add('tags', tags, registry=registry)
+
+        # Adding a Pages folder
+        pages = registry.content.create('Pages')
+        pages.__sdi_deletable__ = False
+        self.add('pages', pages, registry=registry)

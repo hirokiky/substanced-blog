@@ -2,7 +2,7 @@ from webob.exc import HTTPFound
 from substanced.sdi import mgmt_view
 from substanced.form import FormView
 
-from ..resources import BlogEntrySchema, TagSchema
+from ..resources import BlogEntrySchema, TagSchema, PageSchema
 
 
 @mgmt_view(
@@ -24,6 +24,27 @@ class AddBlogEntryView(FormView):
         blogentry = request.registry.content.create('Blog Entry', **appstruct)
         self.context[name] = blogentry
         blogentry.tagids = tagids
+        loc = request.mgmt_path(self.context, name, '@@properties')
+        return HTTPFound(location=loc)
+
+
+@mgmt_view(
+    content_type='Pages',
+    name='add_page',
+    permission='sdi.add-content',
+    renderer='substanced.sdi:templates/form.pt',
+    tab_condition=False,
+)
+class AddPageView(FormView):
+    title = 'Add Page'
+    schema = PageSchema()
+    buttons = ('add',)
+
+    def add_success(self, appstruct):
+        name = appstruct.pop('name')
+        request = self.request
+        tag = request.registry.content.create('Page', **appstruct)
+        self.context[name] = tag
         loc = request.mgmt_path(self.context, name, '@@properties')
         return HTTPFound(location=loc)
 
