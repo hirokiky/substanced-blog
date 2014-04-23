@@ -1,0 +1,10 @@
+<html metal:use-macro="load: main.pt" >
+
+<metal:slot metal:fill-slot="content">
+  <h2><i>${context.name}</i> entries</h2>
+  <ul>
+    <li tal:repeat="entry entries">${entry['pubdate']}: <a href="${entry['url']}">${entry['title']}</a></li>
+  </ul>
+</metal:slot>
+
+</html>

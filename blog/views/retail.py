@@ -100,6 +100,22 @@ class BlogEntryView(object):
 
 
 @view_config(
+    content_type='Tag',
+    renderer='templates/tag.pt',
+)
+def tag(context, request):
+    entries = []
+    for entry in context.entries:
+        entries.append({
+            'title': entry.title,
+            'url': resource_url(entry, request),
+            'pubdate': entry.pubdate,
+        })
+    entries.sort(key=lambda x: x['pubdate'].isoformat())
+    return {'entries': entries}
+
+
+@view_config(
     content_type='File',
     name='download',
 )
