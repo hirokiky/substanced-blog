@@ -100,6 +100,22 @@ class BlogEntryView(object):
 
 
 @view_config(
+    content_type='Tags',
+    renderer='templates/tags.pt',
+)
+def tags(context, request):
+    tags = []
+    for name, tag in context.items():
+        tags.append({
+            'name': name,
+            'numentries': len(tag.entries),
+            'url': resource_url(tag, request)
+        })
+    tags.sort(key=lambda x: x['name'])
+    return {'tags': tags}
+
+
+@view_config(
     content_type='Tag',
     renderer='templates/tag.pt',
 )

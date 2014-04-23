@@ -28,6 +28,7 @@
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
               <li><a href="${request.application_url}">Home</a></li>
+              <li><a href="${request.resource_url(request.root['tags'])}">Tags</a></li>
               <li><a href="${request.application_url}/rss.xml">RSS 2.0</a></li>
               <li><a href="${request.application_url}/index.atom">ATOM 1.0</a></li>
             </ul>
