@@ -19,3 +19,9 @@ Installation
 
 
 .. _SubstanceD: http://substanced.net/
+
+Run
+---
+::
+
+    $ pserve development.ini
