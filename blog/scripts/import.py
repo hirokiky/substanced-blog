@@ -20,6 +20,7 @@ from optparse import OptionParser
 from subprocess import Popen
 from subprocess import PIPE
 
+
 def main():
     from pyramid.paster import get_app
     from pyramid.scripting import get_root
@@ -33,15 +34,15 @@ def main():
     config = options.config
     name = options.name
     if config is None:
-       raise ValueError('must supply config file name')
+        raise ValueError('must supply config file name')
     config = os.path.abspath(os.path.normpath(config))
     app = get_app(config, name)
     root, closer = get_root(app)
     for arg in args:
         print("filename:", arg)
         if not os.path.isfile(arg):
-           print('not a file')
-           continue
+            print('not a file')
+            continue
         path, filename = os.path.split(arg)
         id, ext = os.path.splitext(filename)
         print("id:", id)
@@ -54,24 +55,24 @@ def main():
         last = pieces[-1]
         pubdate = None
         if last.startswith('200'):
-           if len(last) == 8:
-              year, month, day = last[0:4], last[4:6], last[6:8]
-              pubdate = datetime.date(int(year), int(month), int(day))
+            if len(last) == 8:
+                year, month, day = last[0:4], last[4:6], last[6:8]
+                pubdate = datetime.date(int(year), int(month), int(day))
         if pubdate is None:
-           p1 = Popen(["svn", "info", arg], stdout=PIPE)
-           p2 = Popen(["grep", "Last Changed Date"], stdin=p1.stdout,
-                      stdout=PIPE)
-           output = p2.communicate()[0]
-           lines = output.split(':', 1)
-           datestr = lines[1].strip()
-           datestr = datestr.split(' ', 1)[0]
-           year, month, day = datestr[0:4], datestr[5:7], datestr[8:10]
-           pubdate = datetime.date(int(year), int(month), int(day))
+            p1 = Popen(["svn", "info", arg], stdout=PIPE)
+            p2 = Popen(["grep", "Last Changed Date"], stdin=p1.stdout,
+                       stdout=PIPE)
+            output = p2.communicate()[0]
+            lines = output.split(':', 1)
+            datestr = lines[1].strip()
+            datestr = datestr.split(' ', 1)[0]
+            year, month, day = datestr[0:4], datestr[5:7], datestr[8:10]
+            pubdate = datetime.date(int(year), int(month), int(day))
         print('pubdate:', pubdate)
-        entry = BlogEntry(title.decode('UTF-8'), entry.decode('UTF-8'), 
+        entry = BlogEntry(title.decode('UTF-8'), entry.decode('UTF-8'),
                           id.decode('UTF-8'), pubdate, 'html', None, None)
         root[id] = entry
     transaction.commit()
-           
+
 if __name__ == '__main__':
-   main()
+    main()

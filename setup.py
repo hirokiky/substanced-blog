@@ -13,21 +13,21 @@ requires = [
     'docutils',
     'pytz',
     'pyramid_tm',
-    ]
+]
 
 setup(name='blog',
       version='0.0',
       description=' Substance D Demo Blog',
-      long_description=README + '\n\n' +  CHANGES,
+      long_description=README + '\n\n' + CHANGES,
       classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
-        "Programming Language :: Python",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
-        "Topic :: Internet :: WWW/HTTP :: WSGI",
-        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-        ],
+          "Development Status :: 3 - Alpha",
+          "Intended Audience :: Developers",
+          "Programming Language :: Python",
+          "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+          "Topic :: Internet :: WWW/HTTP :: WSGI",
+          "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+      ],
       author='',
       author_email='',
       url='',
@@ -36,8 +36,8 @@ setup(name='blog',
       include_package_data=True,
       zip_safe=False,
       test_suite='blog.tests',
-      install_requires = requires,
-      entry_points = """\
+      install_requires=requires,
+      entry_points="""\
       [paste.app_factory]
       main = blog:main
       [console_scripts]

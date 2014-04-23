@@ -4,13 +4,14 @@ from substanced.form import FormView
 
 from ..resources import BlogEntrySchema, TagSchema
 
+
 @mgmt_view(
     content_type='Root',
     name='add_blog_entry',
-    permission='sdi.add-content', 
+    permission='sdi.add-content',
     renderer='substanced.sdi:templates/form.pt',
     tab_condition=False,
-    )
+)
 class AddBlogEntryView(FormView):
     title = 'Add Blog Entry'
     schema = BlogEntrySchema()

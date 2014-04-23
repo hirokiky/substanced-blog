@@ -7,7 +7,7 @@ from persistent import Persistent
 from pyramid.security import (
     Allow,
     Everyone,
-    )
+)
 
 from substanced.content import content
 from substanced.folder import Folder
@@ -23,7 +23,7 @@ from substanced.root import Root
 from substanced.schema import (
     Schema,
     NameSchemaNode,
-    )
+)
 from substanced.util import renamer, get_oid
 
 from .interfaces import BlogEntryToTag
@@ -45,7 +45,7 @@ class TagPropertySheet(PropertySheet):
     icon='glyphicon glyphicon-tags',
     propertysheets=(
         ('', TagPropertySheet),
-        ),
+    ),
     tab_order=('properties',),
 )
 class Tag(Persistent):
@@ -59,8 +59,10 @@ class Tag(Persistent):
     icon='glyphicon glyphicon-list-alt',
 )
 class Tags(Folder):
+
     """ Folder for tags of a blog entry
     """
+
     def __sdi_addable__(self, context, introspectable):
         return introspectable.get('content_type') == 'Tag'
 
@@ -76,35 +78,37 @@ def tags_choices(context, request):
 def now_default(node, kw):
     return datetime.datetime.now()
 
+
 class BlogEntrySchema(Schema):
     name = NameSchemaNode(
         editing=lambda c, r: r.registry.content.istype(c, 'BlogEntry')
-        )
+    )
     title = colander.SchemaNode(
         colander.String(),
-        )
+    )
     entry = colander.SchemaNode(
         colander.String(),
-        widget = deform.widget.TextAreaWidget(rows=20, cols=70),
-        )
+        widget=deform.widget.TextAreaWidget(rows=20, cols=70),
+    )
     format = colander.SchemaNode(
         colander.String(),
-        validator = colander.OneOf(['rst', 'html']),
-        widget = deform.widget.SelectWidget(
+        validator=colander.OneOf(['rst', 'html']),
+        widget=deform.widget.SelectWidget(
             values=[('rst', 'rst'), ('html', 'html')]),
-        )
+    )
     tagids = MultireferenceIdSchemaNode(
         choices_getter=tags_choices,
         title='Tags',
     )
     pubdate = colander.SchemaNode(
-       colander.DateTime(default_tzinfo=None),
-       default = now_default,
-       )
+        colander.DateTime(default_tzinfo=None),
+        default=now_default,
+    )
 
 
 class BlogEntryPropertySheet(PropertySheet):
     schema = BlogEntrySchema()
+
 
 @content(
     'Blog Entry',
@@ -112,10 +116,10 @@ class BlogEntryPropertySheet(PropertySheet):
     add_view='add_blog_entry',
     propertysheets=(
         ('', BlogEntryPropertySheet),
-        ),
+    ),
     catalog=True,
     tab_order=('properties', 'contents', 'acl_edit'),
-    )
+)
 class BlogEntry(Folder):
 
     name = renamer()
@@ -138,39 +142,44 @@ class BlogEntry(Folder):
     def add_comment(self, comment):
         while 1:
             name = str(time.time())
-            if not name in self:
+            if name not in self:
                 self['comments'][name] = comment
                 break
 
+
 class CommentSchema(Schema):
     commenter = colander.SchemaNode(
-       colander.String(),
-       )
+        colander.String(),
+    )
     text = colander.SchemaNode(
-       colander.String(),
-       )
+        colander.String(),
+    )
     pubdate = colander.SchemaNode(
-       colander.DateTime(),
-       default = now_default,
-       )
+        colander.DateTime(),
+        default=now_default,
+    )
+
 
 class CommentPropertySheet(PropertySheet):
     schema = CommentSchema()
+
 
 @content(
     'Comment',
     icon='glyphicon glyphicon-comment',
     add_view='add_comment',
-    propertysheets = (
+    propertysheets=(
         ('', CommentPropertySheet),
-        ),
+    ),
     catalog = True,
-    )
+)
 class Comment(Persistent):
+
     def __init__(self, commenter_name, text, pubdate):
         self.commenter_name = commenter_name
         self.text = text
         self.pubdate = pubdate
+
 
 def comments_columns(folder, subobject, request, default_columnspec):
     pubdate = getattr(subobject, 'pubdate', None)
@@ -179,57 +188,68 @@ def comments_columns(folder, subobject, request, default_columnspec):
 
     return default_columnspec + [
         {'name': 'Publication date',
-        'value': pubdate,
-        'formatter': 'date',
-        },
-        ]
+         'value': pubdate,
+         'formatter': 'date',
+         },
+    ]
+
 
 @content(
     'Comments',
     icon='glyphicon glyphicon-list',
     columns=comments_columns,
-    )
+)
 class Comments(Folder):
+
     """ Folder for comments of a blog entry
     """
+
     def __sdi_addable__(self, context, introspectable):
         return introspectable.get('content_type') == 'Comment'
+
 
 def attachments_columns(folder, subobject, request, default_columnspec):
     kb_size = None
     if getattr(subobject, 'get_size', None) and callable(subobject.get_size):
-        kb_size = int(int(subobject.get_size())/1000)
+        kb_size = int(int(subobject.get_size()) / 1000)
 
     return default_columnspec + [
         {'name': 'Size',
-        'value': "%s kB" % kb_size,
-        },
-        ]
+         'value': "%s kB" % kb_size,
+         },
+    ]
+
 
 @content(
     'Attachments',
     icon='glyphicon glyphicon-list',
     columns=attachments_columns,
-    )
+)
 class Attachments(Folder):
+
     """ Folder for attachments of a blog entry
     """
+
     def __sdi_addable__(self, context, introspectable):
         return introspectable.get('content_type') == 'File'
 
+
 class BlogSchema(Schema):
+
     """ The schema representing the blog root. """
     title = colander.SchemaNode(
         colander.String(),
         missing=''
-        )
+    )
     description = colander.SchemaNode(
         colander.String(),
         missing=''
-        )
+    )
+
 
 class BlogPropertySheet(PropertySheet):
     schema = BlogSchema()
+
 
 def blog_columns(folder, subobject, request, default_columnspec):
     title = getattr(subobject, 'title', None)
@@ -239,23 +259,24 @@ def blog_columns(folder, subobject, request, default_columnspec):
 
     return default_columnspec + [
         {'name': 'Title',
-        'value': title,
-        },
+         'value': title,
+         },
         {'name': 'Publication Date',
-        'value': pubdate,
-        'formatter': 'date',
-        },
-        ]
+         'value': pubdate,
+         'formatter': 'date',
+         },
+    ]
+
 
 @content(
     'Root',
     icon='glyphicon glyphicon-home',
-    propertysheets = (
+    propertysheets=(
         ('', BlogPropertySheet),
-        ),
+    ),
     after_create= ('after_create', 'after_create_blog'),
     columns=blog_columns,
-    )
+)
 class Blog(Root):
     title = 'Substance D Blog'
     description = 'Description of this blog'
@@ -283,4 +304,3 @@ class Blog(Root):
 
         tag = registry.content.create('Tag')
         tags['testtag'] = tag
-
