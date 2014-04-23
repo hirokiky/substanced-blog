@@ -42,7 +42,7 @@ class TagPropertySheet(PropertySheet):
 @content(
     'Tag',
     add_view='add_tag',
-    icon='glyphicon glyphicon-tags',
+    icon='glyphicon glyphicon-tag',
     propertysheets=(
         ('', TagPropertySheet),
     ),
@@ -56,7 +56,7 @@ class Tag(Persistent):
 
 @content(
     'Tags',
-    icon='glyphicon glyphicon-list-alt',
+    icon='glyphicon glyphicon-tags',
 )
 class Tags(Folder):
 
