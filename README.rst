@@ -12,6 +12,7 @@ This project contains a variety of additional features compared with original de
 
 * Tag
 * Flat Page
+* Search
 
 Installation
 ------------

@@ -1,0 +1,15 @@
+<html metal:use-macro="load: main.pt" >
+
+<metal:slot metal:fill-slot="content">
+  <h2>Search</h2>
+  <form action="">
+    <input value="${searchtext}" name="q" type="search" placeholder="search" />
+    <input type="submit" value="search">
+  </form>
+  Searched by "${searchtext}", found ${len(matchedentries)} page(s).
+  <ul>
+    <li tal:repeat="entry matchedentries"><a href="${request.resource_url(entry)}">${entry.title}</a></li>
+  </ul>
+</metal:slot>
+
+</html>

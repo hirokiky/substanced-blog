@@ -12,6 +12,8 @@ from pyramid.view import (
     view_defaults,
 )
 
+from substanced.util import find_catalog
+
 
 def _getentrybody(format, entry):
     if format == 'rst':
@@ -106,6 +108,23 @@ class BlogEntryView(object):
             return HTTPFound(location=self.request.resource_url(self.context))
 
         return dict(error_message=message)
+
+
+@view_config(
+    name='search',
+    renderer='templates/search.pt'
+)
+def blogentry_search(context, request):
+    search_text = request.GET.get('q')
+    if search_text:
+        catalog = find_catalog(context, 'blogentry')
+        entry = catalog['entry']
+        q = entry.contains(search_text)
+        matched = q.execute()
+    else:
+        matched = []
+    return {'searchtext': search_text,
+            'matchedentries': matched}
 
 
 @view_config(

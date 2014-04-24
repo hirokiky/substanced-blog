@@ -34,6 +34,7 @@
               <li><a href="${request.resource_url(request.root['tags'])}">Tags</a></li>
               <li><a href="${request.application_url}/rss.xml">RSS 2.0</a></li>
               <li><a href="${request.application_url}/index.atom">ATOM 1.0</a></li>
+              <li><a><form action="${request.application_url}/search/"><input name="q" type="search" placeholder="search" /><input type="submit" value="search"></form></a></li>
             </ul>
           </div>
         </div>
