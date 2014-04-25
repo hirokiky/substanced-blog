@@ -13,6 +13,7 @@ requires = [
     'docutils',
     'pytz',
     'pyramid_tm',
+    'igo-python',
 ]
 
 setup(name='blog',

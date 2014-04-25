@@ -24,6 +24,7 @@ Installation
     $ git clone https://github.com/hirokiky/substanced-blog/
     $ cd substanced-blog
     $ python sedup.py develop
+    $ sh getigoipadic.sh
 
 
 .. _SubstanceD: http://substanced.net/
