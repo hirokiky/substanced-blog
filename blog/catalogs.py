@@ -9,7 +9,7 @@ from substanced.util import get_content_type
 
 @catalog_factory('blogentry')
 class BlogEntryCatologFactory(object):
-    entry = Text()
+    titleentry = Text()
     allowed = Allowed(
         permissions=('sdi.view', 'view'),
     )
@@ -20,9 +20,9 @@ class BlogEntryCatalogViews(object):
         self.resource = resource
 
     @indexview(catalog_name='blogentry')
-    def entry(self, default):
+    def titleentry(self, default):
         content_type = get_content_type(self.resource)
         if content_type == 'Blog Entry':
-            return self.resource.entry
+            return [self.resource.title] + self.resource.entry.split()
         else:
             return default

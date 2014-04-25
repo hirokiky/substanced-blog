@@ -119,7 +119,7 @@ def blogentry_search(context, request):
     search_text = request.GET.get('q')
     if search_text:
         catalog = find_catalog(context, 'blogentry')
-        entry = catalog['entry']
+        entry = catalog['titleentry']
         q = entry.contains(search_text)
         matched = q.execute()
     else:
