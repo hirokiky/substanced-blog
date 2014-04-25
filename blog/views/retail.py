@@ -111,6 +111,7 @@ class BlogEntryView(object):
 
 
 @view_config(
+    content_type='Root',
     name='search',
     renderer='templates/search.pt'
 )
@@ -173,6 +174,7 @@ def download_attachment(context, request):
     return response
 
 
+@view_defaults(content_type='Root')
 class FeedViews(object):
 
     def __init__(self, context, request):
