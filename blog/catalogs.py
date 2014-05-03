@@ -25,6 +25,6 @@ class BlogEntryCatalogViews(object):
     def titleentry(self, default):
         content_type = get_content_type(self.resource)
         if content_type == 'Blog Entry':
-            return get_features([self.resource.title]) + get_features(self.resource.entry)
+            return get_features(self.resource.title) + get_features(self.resource.entry)
         else:
             return default
