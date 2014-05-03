@@ -28,10 +28,11 @@ Installation
     $ cd guess_language
     $ python setup.py install
     $ cd ..
-    $ # Setup IPA dictionary for Japanese MA
+    $ # Install substanced-blog
     $ git clone https://github.com/hirokiky/substanced-blog/
     $ cd substanced-blog
     $ python sedup.py develop
+    $ # Setup IPA dictionary for Japanese MA
     $ bash getigoipadic.sh
 
 
