@@ -1,14 +1,19 @@
 """ A module to provide feature extraction.
 """
-from substanced.util import get_current_registry
-
+from guess_language import guessLanguage
 from igo.tagger import Tagger
+
+from substanced.util import get_current_registry
 
 
 def get_features(text):
-    """ Getting features (list of string) from text.
+    """ Getting features (lpist of string) from text.
     """
-    return []
+    mapping = {
+        'ja': get_japanese_features,
+        'zh': get_japanese_features,  # guess_language sometimes mis-recognises ja as zh.
+    }
+    return mapping.get(guessLanguage(text), get_english_features)(text)
 
 
 def get_english_features(text):

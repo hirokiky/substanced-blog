@@ -6,6 +6,8 @@ from substanced.catalog import (
 )
 from substanced.util import get_content_type
 
+from blog.features import get_features
+
 
 @catalog_factory('blogentry')
 class BlogEntryCatologFactory(object):
@@ -23,6 +25,6 @@ class BlogEntryCatalogViews(object):
     def titleentry(self, default):
         content_type = get_content_type(self.resource)
         if content_type == 'Blog Entry':
-            return [self.resource.title] + self.resource.entry.split()
+            return get_features([self.resource.title]) + get_features(self.resource.entry)
         else:
             return default

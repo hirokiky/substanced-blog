@@ -18,9 +18,17 @@ Installation
 ------------
 ::
 
+    $ # Install substanced
     $ git clone https://github.com/Pylons/substanced
     $ cd substanced
     $ python setup.py develop
+    $ cd ..
+    $ # Install guess_langueage for Python3
+    $ hg clone https://bitbucket.org/spirit/guess_language
+    $ cd guess_language
+    $ python setup.py install
+    $ cd ..
+    $ # Setup IPA dictionary for Japanese MA
     $ git clone https://github.com/hirokiky/substanced-blog/
     $ cd substanced-blog
     $ python sedup.py develop
