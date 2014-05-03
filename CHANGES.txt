@@ -3,7 +3,7 @@
 
 - Tag
 - Flat Page
-- Search
+- Search (English/Japanese)
 
 0.0
 ---
