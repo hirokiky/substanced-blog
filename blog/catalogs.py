@@ -6,9 +6,18 @@ from substanced.catalog import (
     Text,
     Field,
 )
+from substanced.event import subscribe_created
+from substanced.root import Root
 
 from blog import resources as blog_resources
 from blog.features import get_features
+
+
+@subscribe_created(Root)
+def created(event):
+    root = event.object
+    service = root['catalogs']
+    service.add_catalog('blogentry', update_indexes=True)
 
 
 @catalog_factory('blogentry')
