@@ -209,8 +209,13 @@ class FeedViews(object):
             info['updated_atom'] = updated.isoformat()
             info['updated_rss'] = updated.strftime('%a, %d %b %Y %H:%M:%S %z')
 
+        system_catalog = find_catalog(context, 'system')
+        blog_catalog = find_catalog(context, 'blogentry')
+        content_type = system_catalog['content_type']
+        query = content_type.eq('Blog Entry')
+        result = query.execute().sort(blog_catalog['pubdate'], reverse=True)
         blogentries = []
-        for name, blogentry in context.items():
+        for blogentry in result:
             if request.registry.content.istype(blogentry, 'Blog Entry'):
                 updated = blogentry.pubdate
                 info = {'url': resource_url(blogentry, request),
