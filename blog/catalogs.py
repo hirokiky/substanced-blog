@@ -4,6 +4,7 @@ from substanced.catalog import (
     indexview_defaults,
     Allowed,
     Text,
+    Field,
 )
 
 from blog import resources as blog_resources
@@ -13,6 +14,7 @@ from blog.features import get_features
 @catalog_factory('blogentry')
 class BlogEntryCatologFactory(object):
     titleentry = Text()
+    pubdate = Field()
     allowed = Allowed(
         permissions=('sdi.view', 'view'),
     )
@@ -26,3 +28,8 @@ class BlogEntryCatalogViews(object):
     @indexview(context=blog_resources.BlogEntry)
     def titleentry(self, default):
         return get_features(self.resource.title) + get_features(self.resource.entry)
+
+    @indexview(context=blog_resources.BlogEntry)
+    @indexview(context=blog_resources.Comment)
+    def pubdate(self, default):
+        return getattr(self.resource, 'pubdate', default)

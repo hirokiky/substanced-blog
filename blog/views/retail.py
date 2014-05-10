@@ -39,10 +39,12 @@ def flatpageview(context, request):
 )
 def blogview(context, request):
     system_catalog = find_catalog(context, 'system')
+    blog_catalog = find_catalog(context, 'blogentry')
     content_type = system_catalog['content_type']
     query = content_type.eq('Blog Entry')
     blogentries = []
-    for blogentry in itertools.islice(query.execute(), 10):
+    result = query.execute().sort(blog_catalog['pubdate'], reverse=True)
+    for blogentry in itertools.islice(result, 10):
         blogentries.append({
             'url': resource_url(blogentry, request),
             'title': blogentry.title,
