@@ -126,7 +126,7 @@ def blogentry_search(context, request):
         catalog = find_catalog(context, 'blogentry')
         entry = catalog['titleentry']
         q = entry.contains(search_text)
-        matched = q.execute()
+        matched = q.execute().sort(catalog['pubdate'], reverse=True)
     else:
         matched = []
     return {'searchtext': search_text,
