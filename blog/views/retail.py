@@ -1,4 +1,5 @@
 import datetime
+import itertools
 import pytz
 
 from docutils.core import publish_parts
@@ -37,20 +38,22 @@ def flatpageview(context, request):
     content_type='Root',
 )
 def blogview(context, request):
+    system_catalog = find_catalog(context, 'system')
+    content_type = system_catalog['content_type']
+    query = content_type.eq('Blog Entry')
     blogentries = []
-    for name, blogentry in context.items()[:10]:
-        if request.registry.content.istype(blogentry, 'Blog Entry'):
-            blogentries.append(
-                {'url': resource_url(blogentry, request),
-                 'title': blogentry.title,
-                 'body': _getentrybody(blogentry.format, blogentry.entry),
-                 'pubdate': blogentry.pubdate,
-                 'attachments': [{'name': a.__name__, 'url': resource_url(a, request, 'download')}
-                                 for a in blogentry['attachments'].values()],
-                 'numcomments': len(blogentry['comments'].values()),
-                 'tags': [{'name': tag.name, 'url': resource_url(tag, request)}
-                          for tag in blogentry.tags]
-                 })
+    for blogentry in itertools.islice(query.execute(), 10):
+        blogentries.append({
+            'url': resource_url(blogentry, request),
+            'title': blogentry.title,
+            'body': _getentrybody(blogentry.format, blogentry.entry),
+            'pubdate': blogentry.pubdate,
+            'attachments': [{'name': a.__name__, 'url': resource_url(a, request, 'download')}
+                            for a in blogentry['attachments'].values()],
+            'numcomments': len(blogentry['comments'].values()),
+            'tags': [{'name': tag.name, 'url': resource_url(tag, request)}
+                     for tag in blogentry.tags]
+        })
     blogentries.sort(key=lambda x: x['pubdate'].isoformat())
     blogentries.reverse()
     return dict(blogentries=blogentries)
@@ -189,19 +192,19 @@ class FeedViews(object):
     def _get_feed_info(self):
         context = self.context
         request = self.request
-        feed = {"rss_url": request.application_url + "/rss.xml",
-                "atom_url": request.application_url + "/index.atom",
-                "blog_url": request.application_url,
-                "title": context.sdi_title,
-                "description": context.description,
-                }
+        feed = {
+            "rss_url": request.application_url + "/rss.xml",
+            "atom_url": request.application_url + "/index.atom",
+            "blog_url": request.application_url,
+            "title": context.sdi_title,
+            "description": context.description
+        }
 
         def _add_updated_strings(updated, info):
             if getattr(updated, 'now', None) is None:
                 y, mo, d, h, mi, s = updated.timetuple()[:6]
-                updated = datetime.datetime(
-                    y, mo, d, h, mi, s, tzinfo=pytz.utc)
-            info['updated_atom'] = pytz.utc.localize(updated).isoformat()
+                updated = datetime.datetime(y, mo, d, h, mi, s, tzinfo=pytz.utc)
+            info['updated_atom'] = updated.isoformat()
             info['updated_rss'] = updated.strftime('%a, %d %b %Y %H:%M:%S %z')
 
         blogentries = []
