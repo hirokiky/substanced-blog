@@ -38,7 +38,7 @@ def flatpageview(context, request):
 )
 def blogview(context, request):
     blogentries = []
-    for name, blogentry in context.items():
+    for name, blogentry in context.items()[:10]:
         if request.registry.content.istype(blogentry, 'Blog Entry'):
             blogentries.append(
                 {'url': resource_url(blogentry, request),
