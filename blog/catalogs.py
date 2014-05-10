@@ -1,11 +1,12 @@
 from substanced.catalog import (
     catalog_factory,
     indexview,
+    indexview_defaults,
     Allowed,
     Text,
 )
-from substanced.util import get_content_type
 
+from blog import resources as blog_resources
 from blog.features import get_features
 
 
@@ -17,14 +18,11 @@ class BlogEntryCatologFactory(object):
     )
 
 
+@indexview_defaults(catalog_name='blogentry')
 class BlogEntryCatalogViews(object):
     def __init__(self, resource):
         self.resource = resource
 
-    @indexview(catalog_name='blogentry')
+    @indexview(context=blog_resources.BlogEntry)
     def titleentry(self, default):
-        content_type = get_content_type(self.resource)
-        if content_type == 'Blog Entry':
-            return get_features(self.resource.title) + get_features(self.resource.entry)
-        else:
-            return default
+        return get_features(self.resource.title) + get_features(self.resource.entry)
